@@ -1,0 +1,785 @@
+{
+  "name": "Entrega 4",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "-from:me"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        176,
+        128
+      ],
+      "id": "3d3a4c9f-5f6e-4ea4-9e6e-42456b2e44e8",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "WggEwTqWaPcDM4zl",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c000",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "auto-reply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c001",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "autoreply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c002",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "automatic reply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c003",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "out of office",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c004",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "undeliverable",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c005",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "delivery status notification",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c006",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "respuesta automática",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c007",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "respuesta automatica",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c008",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "fuera de la oficina",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c009",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "vacaciones",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c010",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "no-reply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c011",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "noreply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c012",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "no_reply",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c013",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "mailer-daemon",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "c014",
+              "leftValue": "={{ $json.From }}",
+              "rightValue": "postmaster",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        128
+      ],
+      "id": "96edd22f-10c2-412c-84a0-91658580937e",
+      "name": "IF anti auto-reply"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -272
+      ],
+      "id": "1a53c3a9-af0f-47a1-ac63-ed2163536988",
+      "name": "Stop - auto-reply"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "s1",
+              "name": "From_email",
+              "type": "string",
+              "value": "={{ (($json.From || '').match(/<([^>]+)>/) || [null, $json.From || ''])[1].trim().toLowerCase() }}"
+            },
+            {
+              "id": "s2",
+              "name": "nombre",
+              "type": "string",
+              "value": "={{ ($json.From || '').replace(/<[^>]*>/g, '').replace(/\"/g, '').trim() }}"
+            },
+            {
+              "id": "s3",
+              "name": "asunto",
+              "type": "string",
+              "value": "={{ $json.Subject }}"
+            },
+            {
+              "id": "s4",
+              "name": "cuerpo",
+              "type": "string",
+              "value": "={{ ($json.snippet || '').substring(0, 1000) }}"
+            },
+            {
+              "id": "s5",
+              "name": "threadid",
+              "type": "string",
+              "value": "={{ $json.threadId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        640,
+        144
+      ],
+      "id": "8fc831b3-2e71-4d64-b6d5-672e7e14d1b1",
+      "name": "Set limpieza payload"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "v1",
+              "leftValue": "={{ $json.From_email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "v2",
+              "leftValue": "={{ $json.From_email }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        144
+      ],
+      "id": "1450ea4e-603c-4220-85b2-4982d192b7f5",
+      "name": "IF email válido"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        864,
+        384
+      ],
+      "id": "a2d19145-cd8c-4936-8877-80df177f535b",
+      "name": "Stop - sin email"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Asunto: {{ $json.asunto }}\nMensaje: {{ $json.cuerpo }}",
+        "options": {
+          "systemMessage": "ROL: eres un asistente de soporte de la empresa Binance, una billetera digital y de préstamos personales. Lees el mail de un cliente y preparas (1) una clasificación y (2) un BORRADOR de respuesta que una persona revisará. Nunca envíes nada. No inventes saldos, tasas, plazos ni datos del cliente.\n\nFORMATO DE SALIDA (respetalo exactamente):\nCATEGORIA: <consulta | reclamo | prestamo | pago | otro>\nBORRADOR:\n<texto de la respuesta, cordial y breve>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1072,
+        128
+      ],
+      "id": "db65ac91-9e78-4618-af18-927ce3677308",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "r1",
+              "name": "categoria",
+              "type": "string",
+              "value": "={{ (($json.output || '').match(/CATEGORIA:\\s*(.+)/i) || [null, 'sin_clasificar'])[1].trim() }}"
+            },
+            {
+              "id": "r2",
+              "name": "borrador",
+              "type": "string",
+              "value": "={{ ($json.output || '').split(/BORRADOR:/i).slice(1).join('').trim() || $json.output }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1344,
+        128
+      ],
+      "id": "6f67fe39-9483-4c82-8c7c-50c58c5e8cba",
+      "name": "Set respuesta IA"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12dm4MRRy2Jz9JDP3nr35QjhVMvBLNUWFgmj9rEzWY3c",
+          "mode": "list",
+          "cachedResultName": "Copia de CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12dm4MRRy2Jz9JDP3nr35QjhVMvBLNUWFgmj9rEzWY3c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 253543557,
+          "mode": "list",
+          "cachedResultName": "Clientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_rVvfjarN4-y4yxi-_TtI2Vd4-jRPp_pKgfMgqQ6mN4/edit#gid=253543557"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "email",
+              "lookupValue": "={{ $('Set limpieza payload').item.json.From_email }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1520,
+        128
+      ],
+      "id": "30af0403-2b12-4672-b496-00702360ff06",
+      "name": "Look up contacto en CRM",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "as1KseXIqgnyTTQE",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e1",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1744,
+        128
+      ],
+      "id": "73077923-ccaa-4e15-931b-d1048cacd104",
+      "name": "IF contacto existe"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "12dm4MRRy2Jz9JDP3nr35QjhVMvBLNUWFgmj9rEzWY3c",
+          "mode": "list",
+          "cachedResultName": "Copia de CRM",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12dm4MRRy2Jz9JDP3nr35QjhVMvBLNUWFgmj9rEzWY3c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 253543557,
+          "mode": "list",
+          "cachedResultName": "Clientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_rVvfjarN4-y4yxi-_TtI2Vd4-jRPp_pKgfMgqQ6mN4/edit#gid=253543557"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "email": "={{ $('Set limpieza payload').item.json.From_email }}",
+            "nombre": "={{ $('Set limpieza payload').item.json.nombre }}",
+            "fecha_alta": "={{ $now.toFormat('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fecha_alta",
+              "displayName": "fecha_alta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1968,
+        224
+      ],
+      "id": "5ada0ce4-0516-47e3-a818-4618b253864c",
+      "name": "Create contacto en CRM",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "as1KseXIqgnyTTQE",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ 'Re: ' + $('Set limpieza payload').item.json.asunto }}",
+        "message": "={{ $('Set respuesta IA').item.json.borrador }}",
+        "options": {
+          "threadId": "={{ $('Set limpieza payload').item.json.threadid }}",
+          "sendTo": "={{ $('Set limpieza payload').item.json.From_email }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2192,
+        112
+      ],
+      "id": "832a07bf-ec4f-47bd-a9d0-9ed685f656e1",
+      "name": "Create Draft (HITL)",
+      "webhookId": "65489877-176d-4977-abde-8f4fb27dd8ed",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "WggEwTqWaPcDM4zl",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "k1",
+              "name": "remitente",
+              "type": "string",
+              "value": "={{ $('Set limpieza payload').item.json.From_email }}"
+            },
+            {
+              "id": "k2",
+              "name": "asunto",
+              "type": "string",
+              "value": "={{ $('Set limpieza payload').item.json.asunto }}"
+            },
+            {
+              "id": "k3",
+              "name": "categoria",
+              "type": "string",
+              "value": "={{ $('Set respuesta IA').item.json.categoria }}"
+            },
+            {
+              "id": "k4",
+              "name": "estado_crm",
+              "type": "string",
+              "value": "={{ $('Look up contacto en CRM').item.json.email ? 'Cliente existente' : 'Contacto nuevo creado' }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2416,
+        112
+      ],
+      "id": "fd0be8c6-3fd6-4750-b426-3d3152b8f651",
+      "name": "Set limpieza para Slack"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CLGRV2SSJ",
+          "mode": "list",
+          "cachedResultName": "soporte"
+        },
+        "text": "=📩 Nuevo mail de *{{ $json.remitente }}*\nAsunto: {{ $json.asunto }}\nCategoría: {{ $json.categoria }}\nCRM: {{ $json.estado_crm }}\n✅ Borrador de respuesta listo en Gmail, pendiente de revisión humana.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        2640,
+        112
+      ],
+      "id": "c8535d30-6d3b-44e6-b518-12e95e329d47",
+      "name": "Slack aviso al equipo",
+      "webhookId": "a1000000-0000-4000-8000-000000000006",
+      "credentials": {
+        "slackApi": {
+          "id": "ljevcAV4VVSvpRTT",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        352
+      ],
+      "id": "ec4955cc-68a0-4d21-89a1-515c602b35df",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "1VMlyLf6dzIFyJtz",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "IF anti auto-reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF anti auto-reply": {
+      "main": [
+        [
+          {
+            "node": "Stop - auto-reply",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set limpieza payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set limpieza payload": {
+      "main": [
+        [
+          {
+            "node": "IF email válido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF email válido": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop - sin email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Set respuesta IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set respuesta IA": {
+      "main": [
+        [
+          {
+            "node": "Look up contacto en CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look up contacto en CRM": {
+      "main": [
+        [
+          {
+            "node": "IF contacto existe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF contacto existe": {
+      "main": [
+        [
+          {
+            "node": "Create Draft (HITL)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create contacto en CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create contacto en CRM": {
+      "main": [
+        [
+          {
+            "node": "Create Draft (HITL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft (HITL)": {
+      "main": [
+        [
+          {
+            "node": "Set limpieza para Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set limpieza para Slack": {
+      "main": [
+        [
+          {
+            "node": "Slack aviso al equipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "73bcd5b3-aa25-4e09-bc4f-0b330a068253",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "03c05cc755d47e79c870dcdd9a74c4f0787b2e54398375b85b33193613347fc1"
+  },
+  "nodeGroups": [],
+  "id": "CbA5IO9IU6HyuLw3",
+  "tags": []
+}
